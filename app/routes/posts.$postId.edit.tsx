@@ -1,10 +1,16 @@
 import ReactMarkdown from "react-markdown";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { prisma } from "~/prisma.server";
 import { Form, useLoaderData } from "@remix-run/react";
 import { Button, Input, Textarea } from "@nextui-org/react";
+import { auth } from "~/session.session";
 
 export const loader = async (c: LoaderFunctionArgs) => {
+  const user = await auth(c.request);
+  if (!user.username) {
+    return redirect("/signin");
+  }
+
   const postId = c.params.postId as string;
   const post = await prisma.post.findUnique({
     where: {
@@ -22,7 +28,6 @@ export const loader = async (c: LoaderFunctionArgs) => {
     post,
   });
 };
-
 
 export default function Page() {
   const loaderData = useLoaderData<typeof loader>();
