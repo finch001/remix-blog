@@ -3,8 +3,9 @@ FROM node:20
 COPY . /app
 WORKDIR /app
 
-RUN npm i 
-RUN npm run build
+RUN npm i -g pnpm
+RUN pnpm i --registry=https://registry.npmmirror.com
+RUN pnpm run build
 
 EXPOSE 3000
 ENTRYPOINT ["npm", "start"]
